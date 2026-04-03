@@ -93,9 +93,9 @@ Details and path rules: [`pine_mcp/README.md`](pine_mcp/README.md).
 2. `cd pine_mcp && bundle install`.
 3. Enable MCP server **`pine-dataset`** (see [`.cursor/mcp.json`](.cursor/mcp.json)).
 
-[`.cursor/mcp.json`](.cursor/mcp.json) uses `cwd` **`pine_mcp`** and does **not** set `PINE_DATASET_ROOT`, so the server defaults to the repo’s **`output/`** directory (`../../output` from `pine_mcp/bin`). Do **not** set `PINE_DATASET_ROOT=output` with that `cwd`—that would look for `pine_mcp/output`, which the pipeline does not use.
+[`.cursor/mcp.json`](.cursor/mcp.json) runs **`/bin/bash`** with **`${workspaceFolder}/pine_mcp/run_stdio.sh`**, which fixes its own `cd` (Cursor often ignores MCP `cwd`) and sources **RVM** when present. It does **not** set `PINE_DATASET_ROOT`; the server defaults to repo **`output/`**. Do **not** set `PINE_DATASET_ROOT=output` under `pine_mcp`.
 
-If Cursor does not resolve `cwd` relative to the workspace, copy the server entry into user MCP settings with **absolute** `cwd` (and **absolute** `PINE_DATASET_ROOT` only if you must override the default). On WSL, use Linux paths (e.g. `/home/.../pine_dataset_pipeline/pine_mcp` and `/home/.../pine_dataset_pipeline/output`).
+If `${workspaceFolder}` is not expanded, point **`args`** at the **absolute** path to [`pine_mcp/run_stdio.sh`](pine_mcp/run_stdio.sh).
 
 ### Agent skills + MCP
 

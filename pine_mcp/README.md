@@ -22,6 +22,12 @@ If `reference/functions.json` is empty or stale, function lookup tools return li
 
 Paths in the catalog are resolved from the string you pass in—**relative paths are relative to the process current working directory** (when Cursor starts the server, that should be `pine_mcp/` per [`.cursor/mcp.json`](../.cursor/mcp.json)).
 
+### Cursor: `LoadError` / “No such file or directory -- bin/pine_mcp_server”
+
+Cursor often **does not apply `cwd`** to MCP stdio processes, so `bundle exec ruby bin/pine_mcp_server` runs from the wrong directory. The workspace [`.cursor/mcp.json`](../.cursor/mcp.json) therefore calls **[`run_stdio.sh`](run_stdio.sh)** by **absolute path** (`${workspaceFolder}/pine_mcp/run_stdio.sh`): that script `cd`s to its own directory, optionally **sources RVM**, then runs `bundle exec ruby bin/pine_mcp_server`. Reload MCP after edits.
+
+If `${workspaceFolder}` is not expanded in your Cursor build, set **`args`** to the **absolute** path of `run_stdio.sh` (e.g. `/home/you/.../pine_dataset_pipeline/pine_mcp/run_stdio.sh`). Ensure `run_stdio.sh` is executable: `chmod +x pine_mcp/run_stdio.sh`.
+
 - **Default (recommended for this repo):** leave `PINE_DATASET_ROOT` unset. [`bin/pine_mcp_server`](bin/pine_mcp_server) then uses `File.expand_path("../../output", __dir__)` (repo `output/` next to `pine_mcp/`).
 - **Wrong:** `PINE_DATASET_ROOT=output` with `cwd` `pine_mcp` points at `pine_mcp/output/`, which is not where the pipeline writes. The workspace [`.cursor/mcp.json`](../.cursor/mcp.json) intentionally omits `PINE_DATASET_ROOT` so the default applies.
 - **Override:** set `PINE_DATASET_ROOT` to an **absolute** directory when the repo lives somewhere non-standard or Cursor cannot use the bundled `cwd` (WSL example: `/home/you/project/pine_dataset_pipeline/output`).

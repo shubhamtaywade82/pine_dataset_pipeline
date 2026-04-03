@@ -1,9 +1,8 @@
 {
   "mcpServers": {
     "pine-dataset": {
-      "command": "bundle",
-      "args": ["exec", "ruby", "bin/pine_mcp_server"],
-      "cwd": "pine_mcp"
+      "command": "/bin/bash",
+      "args": ["${workspaceFolder}/pine_mcp/run_stdio.sh"]
     }
   }
 }
