@@ -1,5 +1,7 @@
-# Optional seed file for manually curated reference manual entries.
-# Use this when you want to add deterministic functions from the Pine reference manual
-# before or alongside automated extraction.
-functions: {}
+# Overlay for Pine Script v6 reference entries (merged after automated extraction).
+# Use for symbols that HTML parsing misses or to pin canonical signatures.
+functions:
+  ta.rsi:
+    signature: "ta.rsi(series float source, simple int length) → series float"
+    description: "Relative Strength Index. Seed entry; prefer extracted docs when available."
 namespaces: {}

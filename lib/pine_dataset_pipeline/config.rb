@@ -36,5 +36,12 @@ module PineDatasetPipeline
     def reference_root
       data.fetch("reference_root")
     end
+
+    def reference_seed_path
+      rel = data["reference_seed_path"]
+      return File.expand_path("../../#{rel}", __dir__) if rel
+
+      File.expand_path("../../data/seed/reference_seed.yml", __dir__)
+    end
   end
 end

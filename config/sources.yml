@@ -6,6 +6,7 @@ allowed_hosts:
 
 seed_urls:
   - "https://www.tradingview.com/pine-script-docs/"
+  - "https://www.tradingview.com/pine-script-reference/v6/"
   - "https://www.tradingview.com/pine-script-docs/language/built-ins/"
   - "https://www.tradingview.com/pine-script-docs/language/type-system/"
   - "https://www.tradingview.com/pine-script-docs/language/user-defined-functions/"
@@ -13,7 +14,7 @@ seed_urls:
   - "https://www.tradingview.com/pine-script-docs/writing/style-guide/"
   - "https://www.tradingview.com/pine-script-docs/release-notes/"
 crawl:
-  max_pages: 500
+  max_pages: 800
   max_depth: 4
   respect_robots: true
 output_dir: "output"

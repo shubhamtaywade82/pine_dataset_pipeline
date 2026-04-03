@@ -1,0 +1,11 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+
+dataset_root = ENV["PINE_DATASET_ROOT"]
+dataset_root = File.expand_path("../../output", __dir__) if dataset_root.nil? || dataset_root.empty?
+
+$LOAD_PATH.unshift(File.expand_path("../lib", __dir__))
+
+require "pine_mcp/server"
+
+PineMcp::Server.start(dataset_root: dataset_root)

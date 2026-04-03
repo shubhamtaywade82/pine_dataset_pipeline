@@ -44,13 +44,20 @@ module PineDatasetPipeline
       split_pages = Builders::LayerSplitter.split(normalized_pages)
 
       log.info("Extracting reference (functions, namespaces)")
-      reference = ReferenceExtractor.extract(normalized_pages)
+      reference = ReferenceExtractor.extract(
+        crawl_result.pages,
+        seed_path: @config.reference_seed_path
+      )
 
       log.info("Building index")
       index = IndexBuilder.build(normalized_pages)
 
+      log.info("Building MCP index")
+      mcp_index = McpIndexBuilder.build(normalized_pages, reference[:functions])
+
       log.info("Writing JSON outputs under #{output_dir}")
-      Writers::JsonWriter.write("#{output_dir}/raw_pages.json", crawl_result.pages)
+      raw_for_json = crawl_result.pages.map { |p| CrawlPageSerializer.for_json(p) }
+      Writers::JsonWriter.write("#{output_dir}/raw_pages.json", raw_for_json)
       Writers::JsonWriter.write("#{output_dir}/normalized_pages.json", normalized_pages)
       Writers::JsonWriter.write("#{output_dir}/reference/functions.json", reference[:functions])
       Writers::JsonWriter.write("#{output_dir}/reference/namespaces.json", reference[:namespaces])
@@ -60,6 +67,7 @@ module PineDatasetPipeline
       Writers::JsonWriter.write("#{output_dir}/release_notes/pages.json", split_pages["release_notes"] || [])
       Writers::JsonWriter.write("#{output_dir}/primer/pages.json", split_pages["primer"] || [])
       Writers::JsonWriter.write("#{output_dir}/index.json", index)
+      Writers::JsonWriter.write("#{output_dir}/mcp_index.json", mcp_index)
 
       log.info("Done. pages=#{normalized_pages.size} reference_functions=#{reference[:functions].size}")
 

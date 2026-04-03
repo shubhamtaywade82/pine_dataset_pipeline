@@ -1,0 +1,29 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    addressable (2.8.9)
+      public_suffix (>= 2.0.2, < 8.0)
+    bigdecimal (4.1.0)
+    json-schema (6.2.0)
+      addressable (~> 2.8)
+      bigdecimal (>= 3.1, < 5)
+    mcp (0.10.0)
+      json-schema (>= 4.1)
+    public_suffix (7.0.5)
+
+PLATFORMS
+  ruby
+  x86_64-linux
+
+DEPENDENCIES
+  mcp (~> 0.10)
+
+CHECKSUMS
+  addressable (2.8.9) sha256=cc154fcbe689711808a43601dee7b980238ce54368d23e127421753e46895485
+  bigdecimal (4.1.0) sha256=6dc07767aa3dc456ccd48e7ae70a07b474e9afd7c5bc576f80bd6da5c8dd6cae
+  json-schema (6.2.0) sha256=e8bff46ed845a22c1ab2bd0d7eccf831c01fe23bb3920caa4c74db4306813666
+  mcp (0.10.0) sha256=09b9231eb16dff75cc7b8a95817c8acfcf4d1cab8d34f350671e43e765242b57
+  public_suffix (7.0.5) sha256=1a8bb08f1bbea19228d3bed6e5ed908d1cb4f7c2726d18bd9cadf60bc676f623
+
+BUNDLED WITH
+  4.0.6
