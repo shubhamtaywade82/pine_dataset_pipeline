@@ -25,6 +25,7 @@ module PineDatasetPipeline
       until queue.empty? || pages.size >= @config.crawl_max_pages
         url, depth = queue.shift
         next if seen[url]
+
         seen[url] = true
 
         log.debug { "GET #{url} (depth=#{depth}, queue=#{queue.size})" }

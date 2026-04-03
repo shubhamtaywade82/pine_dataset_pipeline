@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 # frozen_string_literal: true
 
-require_relative "../lib/pine_dataset_pipeline"
+require_relative '../lib/pine_dataset_pipeline'
 
 PineDatasetPipeline::CLI.start(ARGV)

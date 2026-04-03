@@ -29,9 +29,9 @@ module PineDatasetPipeline
       keywords = []
       keywords << page[:layer]
       keywords << page[:topic]
-      keywords << "pine_script_v6"
-      keywords << "reference_manual" if page[:is_reference_manual]
-      keywords << "docs_home" if page[:is_docs_home]
+      keywords << 'pine_script_v6'
+      keywords << 'reference_manual' if page[:is_reference_manual]
+      keywords << 'docs_home' if page[:is_docs_home]
       keywords.compact.uniq
     end
   end

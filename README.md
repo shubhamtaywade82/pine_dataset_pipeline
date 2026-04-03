@@ -101,6 +101,16 @@ If Cursor does not resolve `cwd` relative to the workspace, copy the server entr
 
 Skills under [`.cursor/skills/`](.cursor/skills/) (e.g. [`pine-v6-core`](.cursor/skills/pine-v6-core/SKILL.md)) guide Pine v6 style and API discipline. When the MCP server is enabled, prefer **tool lookups** for exact names and signatures instead of guessing.
 
+### Relation to `pinescript-agents` (Python workspace)
+
+If you use **[pinescript-agents](https://github.com/TradersPost/pinescript-agents)** (e.g. `~/project/trading-workspace/pinescript-agents`) for Claude Code skills, templates, and optional **Python** video analysis, this Ruby repo is the place for **synced docs → JSON → MCP**. See **[docs/pinescript-agents-ruby-parity.md](docs/pinescript-agents-ruby-parity.md)** for a full component mapping and a suggested combined workflow.
+
+Quick workspace check (dataset files + `pine_mcp` bundle hints):
+
+```bash
+bin/pine_docs_sync workspace
+```
+
 ### Verify paths (optional)
 
 From `pine_mcp/`:

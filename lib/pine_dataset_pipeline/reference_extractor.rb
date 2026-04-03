@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "yaml"
+require 'yaml'
 
 module PineDatasetPipeline
   class ReferenceExtractor
@@ -21,7 +21,7 @@ module PineDatasetPipeline
     end
 
     def self.default_seed_path
-      File.expand_path("../../data/seed/reference_seed.yml", __dir__)
+      File.expand_path('../../data/seed/reference_seed.yml', __dir__)
     end
 
     def self.deduped_reference_pages(pages)
@@ -49,8 +49,8 @@ module PineDatasetPipeline
       doc = Nokogiri::HTML(html)
       source_url = url_for(page)
 
-      doc.xpath("//*[@id]").each do |node|
-        id = node["id"]
+      doc.xpath('//*[@id]').each do |node|
+        id = node['id']
         next unless id&.match?(SECTION_ID)
 
         api_name = api_name_from_section_id(id)
@@ -90,14 +90,14 @@ module PineDatasetPipeline
         section_ids: [section_id],
         signature: signature,
         description: description,
-        namespace: api_name.split(".").first,
+        namespace: api_name.split('.').first,
         source_url: source_url,
         source_urls: [source_url].compact
       }.compact
     end
 
     def self.signature_from_section(node)
-      node.css("pre code, code").each do |code|
+      node.css('pre code, code').each do |code|
         text = Parser.normalize_whitespace(code.text)
         next if text.length < 5
 
@@ -114,13 +114,13 @@ module PineDatasetPipeline
       t = text.strip
       return false if t.length < 5
 
-      (t.include?("(") && t.include?(")")) || t.include?("→") || t.include?("->")
+      (t.include?('(') && t.include?(')')) || t.include?('→') || t.include?('->')
     end
 
     def self.description_from_section(node)
       parts = []
       node.children.each do |child|
-        next if child.name == "pre"
+        next if child.name == 'pre'
 
         if child.element?
           parts << child.text unless %w[table script style].include?(child.name)
@@ -129,15 +129,15 @@ module PineDatasetPipeline
           parts << t unless t.empty?
         end
       end
-      text = Parser.normalize_whitespace(parts.join(" "))
+      text = Parser.normalize_whitespace(parts.join(' '))
       text = text[0, 4000] if text.length > 4000
       text
     end
 
     def self.fallback_code_block_extract(doc, source_url, functions)
-      doc.css("pre code, code").each do |code|
+      doc.css('pre code, code').each do |code|
         text = Parser.normalize_whitespace(code.text)
-        next unless text.include?("=>") || text.include?("→") || text.match?(/\)\s*[→-]>/) || text.match?(/\w\.\w+\(/)
+        next unless text.include?('=>') || text.include?('→') || text.match?(/\)\s*[→-]>/) || text.match?(/\w\.\w+\(/)
 
         sig = infer_signature(text)
         next unless sig
@@ -148,7 +148,7 @@ module PineDatasetPipeline
         functions[name] = {
           name: name,
           signature: sig[:signature],
-          namespace: name.split(".").first,
+          namespace: name.split('.').first,
           source_url: source_url,
           source_urls: [source_url].compact,
           section_ids: []
@@ -159,18 +159,18 @@ module PineDatasetPipeline
     def self.infer_signature(text)
       first = text.lines.map(&:strip).find do |line|
         line.match?(/^[a-z_][\w.]*\s*\(/i) ||
-          line.match?(/^(?:ta|math|array|color|strategy|request|str|syminfo|nz|fixnan)\.[a-z_][\w]*\s*\(/i)
+          line.match?(/^(?:ta|math|array|color|strategy|request|str|syminfo|nz|fixnan)\.[a-z_]\w*\s*\(/i)
       end
       return nil unless first
 
-      name = first.split("(").first.strip
+      name = first.split('(').first.strip
       return nil if name.empty?
 
       { name: name, signature: first }
     end
 
     def self.api_name_from_section_id(id)
-      id.sub(/\A(fun|var|type|field|method|keyword|enum)_/, "")
+      id.sub(/\A(fun|var|type|field|method|keyword|enum)_/, '')
     end
 
     def self.reference_page?(page)
@@ -183,17 +183,17 @@ module PineDatasetPipeline
     end
 
     def self.url_for(page)
-      (page[:final_url] || page["final_url"]).to_s
+      (page[:final_url] || page['final_url']).to_s
     end
 
     def self.html_for(page)
-      (page[:html] || page["html"]).to_s
+      (page[:html] || page['html']).to_s
     end
 
     def self.namespaces_from(functions)
       namespaces = Hash.new { |h, k| h[k] = [] }
       functions.each_key do |name|
-        ns = name.to_s.split(".").first
+        ns = name.to_s.split('.').first
         namespaces[ns] << name.to_s
       end
       namespaces.transform_values(&:uniq)
@@ -205,17 +205,17 @@ module PineDatasetPipeline
       seed = YAML.load_file(seed_path)
       return unless seed.is_a?(Hash)
 
-      (seed["functions"] || {}).each do |name, meta|
+      (seed['functions'] || {}).each do |name, meta|
         next unless name.is_a?(String) && meta.is_a?(Hash)
 
         sym_meta = stringify_for_merge(meta)
-        if functions[name]
-          functions[name] = functions[name].merge(sym_meta) do |_, old, new|
-            new.nil? || new == {} ? old : new
-          end
-        else
-          functions[name] = { name: name, namespace: name.split(".").first }.merge(sym_meta)
-        end
+        functions[name] = if functions[name]
+                            functions[name].merge(sym_meta) do |_, old, new|
+                              new.nil? || new == {} ? old : new
+                            end
+                          else
+                            { name: name, namespace: name.split('.').first }.merge(sym_meta)
+                          end
       end
     end
 

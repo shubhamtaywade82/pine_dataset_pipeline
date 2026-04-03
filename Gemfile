@@ -1,12 +1,14 @@
-source "https://rubygems.org"
+# frozen_string_literal: true
 
-gem "nokogiri"
-gem "faraday"
-gem "json"
-gem "yaml"
-gem "addressable"
-gem "tty-command"
+source 'https://rubygems.org'
+
+gem 'addressable'
+gem 'faraday'
+gem 'json'
+gem 'nokogiri'
+gem 'tty-command'
+gem 'yaml'
 
 group :development, :test do
-  gem "rspec"
+  gem 'rspec'
 end

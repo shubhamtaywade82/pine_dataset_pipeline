@@ -8,19 +8,19 @@ module PineDatasetPipeline
       layer =
         case path
         when %r{\A/pine-script-reference/v6/}
-          "reference"
+          'reference'
         when %r{\A/pine-script-docs/language/}
-          "language"
+          'language'
         when %r{\A/pine-script-docs/concepts/}
-          "concepts"
+          'concepts'
         when %r{\A/pine-script-docs/writing/}
-          "writing"
+          'writing'
         when %r{\A/pine-script-docs/release-notes/}
-          "release_notes"
+          'release_notes'
         when %r{\A/pine-script-docs/}
-          "primer"
+          'primer'
         else
-          "unknown"
+          'unknown'
         end
 
       topic = infer_topic(page, path, layer)
@@ -28,20 +28,22 @@ module PineDatasetPipeline
       page.merge(
         layer: layer,
         topic: topic,
-        is_reference_manual: layer == "reference",
-        is_docs_home: path == "/pine-script-docs/" || path == "/pine-script-docs"
+        is_reference_manual: layer == 'reference',
+        is_docs_home: ['/pine-script-docs/', '/pine-script-docs'].include?(path)
       )
     end
 
     def self.infer_topic(page, path, layer)
-      text = [page[:title], *page[:headings].map { |h| h[:text] }].join(" ").downcase
+      text = [page[:title], *page[:headings].map { |h| h[:text] }].join(' ').downcase
 
-      return "built_ins" if text.include?("built-ins") || path.include?("/built-ins/")
-      return "type_system" if text.include?("type system") || path.include?("/type-system/")
-      return "strategies" if text.include?("strategies") || path.include?("/strategies/")
-      return "user_defined_functions" if text.include?("user-defined functions") || path.include?("/user-defined-functions/")
-      return "style_guide" if text.include?("style guide") || path.include?("/style-guide/")
-      return "release_notes" if layer == "release_notes"
+      return 'built_ins' if text.include?('built-ins') || path.include?('/built-ins/')
+      return 'type_system' if text.include?('type system') || path.include?('/type-system/')
+      return 'strategies' if text.include?('strategies') || path.include?('/strategies/')
+      if text.include?('user-defined functions') || path.include?('/user-defined-functions/')
+        return 'user_defined_functions'
+      end
+      return 'style_guide' if text.include?('style guide') || path.include?('/style-guide/')
+      return 'release_notes' if layer == 'release_notes'
 
       layer
     end

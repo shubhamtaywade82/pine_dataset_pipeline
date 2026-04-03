@@ -40,6 +40,15 @@ test -f "$PINE_DATASET_ROOT/reference/functions.json" && echo "ok"
 
 ## Run (manual)
 
+**Do not** run `lib/pine_mcp/server.rb` directly (e.g. `./lib/pine_mcp/server.rb`). That file has no Ruby shebang; the shell will interpret it as a script and you will see errors like `require: not found`. Always start **`bin/pine_mcp_server`** with the `ruby` interpreter.
+
+```bash
+cd pine_mcp
+bundle exec ruby bin/pine_mcp_server
+```
+
+With an explicit dataset directory:
+
 ```bash
 PINE_DATASET_ROOT=/absolute/path/to/pine_dataset_pipeline/output bundle exec ruby bin/pine_mcp_server
 ```

@@ -3,13 +3,15 @@
 module PineDatasetPipeline
   class CLI
     def self.start(argv)
-      command = argv.shift || "sync"
+      command = argv.shift || 'sync'
 
       case command
-      when "sync"
+      when 'sync'
         new.sync
-      when "crawl"
+      when 'crawl'
         new.crawl
+      when 'workspace'
+        WorkspaceDoctor.run
       else
         warn "Unknown command: #{command}"
         exit 1
@@ -22,7 +24,7 @@ module PineDatasetPipeline
     end
 
     def crawl
-      PineDatasetPipeline.logger.info("Crawl (JSON to stdout)")
+      PineDatasetPipeline.logger.info('Crawl (JSON to stdout)')
       result = Crawler.new(config: @config, fetcher: @fetcher).crawl
       puts JSON.pretty_generate(pages: result.pages, errors: result.errors)
     end
@@ -40,19 +42,19 @@ module PineDatasetPipeline
       log.info("Normalizing #{crawl_result.pages.size} pages")
       normalized_pages = Builders::PageCollector.build(crawl_result)
 
-      log.info("Splitting by layer")
+      log.info('Splitting by layer')
       split_pages = Builders::LayerSplitter.split(normalized_pages)
 
-      log.info("Extracting reference (functions, namespaces)")
+      log.info('Extracting reference (functions, namespaces)')
       reference = ReferenceExtractor.extract(
         crawl_result.pages,
         seed_path: @config.reference_seed_path
       )
 
-      log.info("Building index")
+      log.info('Building index')
       index = IndexBuilder.build(normalized_pages)
 
-      log.info("Building MCP index")
+      log.info('Building MCP index')
       mcp_index = McpIndexBuilder.build(normalized_pages, reference[:functions])
 
       log.info("Writing JSON outputs under #{output_dir}")
@@ -61,11 +63,11 @@ module PineDatasetPipeline
       Writers::JsonWriter.write("#{output_dir}/normalized_pages.json", normalized_pages)
       Writers::JsonWriter.write("#{output_dir}/reference/functions.json", reference[:functions])
       Writers::JsonWriter.write("#{output_dir}/reference/namespaces.json", reference[:namespaces])
-      Writers::JsonWriter.write("#{output_dir}/language/pages.json", split_pages["language"] || [])
-      Writers::JsonWriter.write("#{output_dir}/concepts/pages.json", split_pages["concepts"] || [])
-      Writers::JsonWriter.write("#{output_dir}/writing/pages.json", split_pages["writing"] || [])
-      Writers::JsonWriter.write("#{output_dir}/release_notes/pages.json", split_pages["release_notes"] || [])
-      Writers::JsonWriter.write("#{output_dir}/primer/pages.json", split_pages["primer"] || [])
+      Writers::JsonWriter.write("#{output_dir}/language/pages.json", split_pages['language'] || [])
+      Writers::JsonWriter.write("#{output_dir}/concepts/pages.json", split_pages['concepts'] || [])
+      Writers::JsonWriter.write("#{output_dir}/writing/pages.json", split_pages['writing'] || [])
+      Writers::JsonWriter.write("#{output_dir}/release_notes/pages.json", split_pages['release_notes'] || [])
+      Writers::JsonWriter.write("#{output_dir}/primer/pages.json", split_pages['primer'] || [])
       Writers::JsonWriter.write("#{output_dir}/index.json", index)
       Writers::JsonWriter.write("#{output_dir}/mcp_index.json", mcp_index)
 

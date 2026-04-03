@@ -3,7 +3,7 @@
 module PineDatasetPipeline
   class Fetcher
     DEFAULT_HEADERS = {
-      "User-Agent" => "Mozilla/5.0 (compatible; PineDatasetPipeline/1.0; +https://openai.com)"
+      'User-Agent' => 'Mozilla/5.0 (compatible; PineDatasetPipeline/1.0; +https://openai.com)'
     }.freeze
 
     def initialize(headers: DEFAULT_HEADERS, open_timeout: 20, read_timeout: 30)
