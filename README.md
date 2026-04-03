@@ -51,11 +51,51 @@ Validate with [skills-ref](https://github.com/agentskills/agentskills/tree/main/
 skills-ref validate .cursor/skills/pine-v6-core
 ```
 
-## MCP server (local)
+## MCP server (local, Pine v6)
 
-The [`pine_mcp/`](pine_mcp/) directory is a small Bundler project that loads `output/*.json` and registers MCP tools (`search_functions`, `get_function`, `list_namespace`, `search_docs`, `get_doc_page`, `validate_code`).
+The [`pine_mcp/`](pine_mcp/) directory is a small Bundler project that loads **`output/*.json`** (same v6-oriented dataset produced by `bin/pine_docs_sync sync`) and registers MCP tools for Cursor and other MCP clients.
 
-See [`pine_mcp/README.md`](pine_mcp/README.md) and [`.cursor/mcp.json`](.cursor/mcp.json). If Cursor does not resolve relative `cwd` / `PINE_DATASET_ROOT`, point both at **absolute** paths on your machine.
+### What it is for
+
+- **Lookup:** function names, namespaces, and manual/reference text from your synced JSON—not live TradingView.
+- **Light checks:** `validate_code` uses the local function registry (version header + identifiers). It is **not** the TradingView compiler.
+
+### Tools (server name: `pine-dataset`)
+
+| Tool | Role |
+|------|------|
+| `search_functions` | Find built-ins by substring |
+| `get_function` | One function entry (signature-oriented text from the index) |
+| `list_namespace` | Functions in a namespace |
+| `search_docs` | Search normalized manual / concept pages |
+| `get_doc_page` | Load one page record |
+| `validate_code` | Heuristic validation against the local registry |
+
+Details and path rules: [`pine_mcp/README.md`](pine_mcp/README.md).
+
+### Cursor setup
+
+1. Repo root: `bundle install` and `bin/pine_docs_sync sync` so `output/` is populated.
+2. `cd pine_mcp && bundle install`.
+3. Enable MCP server **`pine-dataset`** (see [`.cursor/mcp.json`](.cursor/mcp.json)).
+
+[`.cursor/mcp.json`](.cursor/mcp.json) uses `cwd` **`pine_mcp`** and does **not** set `PINE_DATASET_ROOT`, so the server defaults to the repo’s **`output/`** directory (`../../output` from `pine_mcp/bin`). Do **not** set `PINE_DATASET_ROOT=output` with that `cwd`—that would look for `pine_mcp/output`, which the pipeline does not use.
+
+If Cursor does not resolve `cwd` relative to the workspace, copy the server entry into user MCP settings with **absolute** `cwd` (and **absolute** `PINE_DATASET_ROOT` only if you must override the default). On WSL, use Linux paths (e.g. `/home/.../pine_dataset_pipeline/pine_mcp` and `/home/.../pine_dataset_pipeline/output`).
+
+### Agent skills + MCP
+
+Skills under [`.cursor/skills/`](.cursor/skills/) (e.g. [`pine-v6-core`](.cursor/skills/pine-v6-core/SKILL.md)) guide Pine v6 style and API discipline. When the MCP server is enabled, prefer **tool lookups** for exact names and signatures instead of guessing.
+
+### Verify paths (optional)
+
+From `pine_mcp/`:
+
+```bash
+test -f "$(ruby -e 'puts File.expand_path("../../output/reference/functions.json", "bin")')" && echo "default dataset path ok"
+```
+
+After a full sync, `output/reference/functions.json` should be non-empty so function tools return useful results.
 
 ## Tests
 
