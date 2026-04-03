@@ -1,0 +1,5 @@
+# Optional seed file for manually curated reference manual entries.
+# Use this when you want to add deterministic functions from the Pine reference manual
+# before or alongside automated extraction.
+functions: {}
+namespaces: {}

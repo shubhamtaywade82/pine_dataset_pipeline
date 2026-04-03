@@ -1,0 +1,28 @@
+# frozen_string_literal: true
+
+require "json"
+require "yaml"
+require "uri"
+require "open-uri"
+require "digest"
+require "fileutils"
+require "set"
+require "time"
+require "nokogiri"
+require "faraday"
+
+require_relative "pine_dataset_pipeline/version"
+require_relative "pine_dataset_pipeline/config"
+require_relative "pine_dataset_pipeline/fetcher"
+require_relative "pine_dataset_pipeline/crawler"
+require_relative "pine_dataset_pipeline/parser"
+require_relative "pine_dataset_pipeline/normalizer"
+require_relative "pine_dataset_pipeline/classifier"
+require_relative "pine_dataset_pipeline/index_builder"
+require_relative "pine_dataset_pipeline/reference_extractor"
+require_relative "pine_dataset_pipeline/cli"
+
+require_relative "pine_dataset_pipeline/utils/slug"
+require_relative "pine_dataset_pipeline/writers/json_writer"
+require_relative "pine_dataset_pipeline/builders/page_collector"
+require_relative "pine_dataset_pipeline/builders/layer_splitter"
