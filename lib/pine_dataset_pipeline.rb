@@ -12,6 +12,7 @@ require "nokogiri"
 require "faraday"
 
 require_relative "pine_dataset_pipeline/version"
+require_relative "pine_dataset_pipeline/logging"
 require_relative "pine_dataset_pipeline/config"
 require_relative "pine_dataset_pipeline/fetcher"
 require_relative "pine_dataset_pipeline/crawler"

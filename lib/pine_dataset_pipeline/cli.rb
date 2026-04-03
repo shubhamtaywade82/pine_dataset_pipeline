@@ -22,20 +22,34 @@ module PineDatasetPipeline
     end
 
     def crawl
+      PineDatasetPipeline.logger.info("Crawl (JSON to stdout)")
       result = Crawler.new(config: @config, fetcher: @fetcher).crawl
       puts JSON.pretty_generate(pages: result.pages, errors: result.errors)
     end
 
     def sync
+      log = PineDatasetPipeline.logger
       output_dir = File.expand_path("../../#{@config.output_dir}", __dir__)
       FileUtils.mkdir_p(output_dir)
 
+      log.info("Sync: output_dir=#{output_dir}")
+      log.info("Seeds: #{@config.seed_urls.join(', ')}")
+
       crawl_result = Crawler.new(config: @config, fetcher: @fetcher).crawl
+
+      log.info("Normalizing #{crawl_result.pages.size} pages")
       normalized_pages = Builders::PageCollector.build(crawl_result)
+
+      log.info("Splitting by layer")
       split_pages = Builders::LayerSplitter.split(normalized_pages)
+
+      log.info("Extracting reference (functions, namespaces)")
       reference = ReferenceExtractor.extract(normalized_pages)
+
+      log.info("Building index")
       index = IndexBuilder.build(normalized_pages)
 
+      log.info("Writing JSON outputs under #{output_dir}")
       Writers::JsonWriter.write("#{output_dir}/raw_pages.json", crawl_result.pages)
       Writers::JsonWriter.write("#{output_dir}/normalized_pages.json", normalized_pages)
       Writers::JsonWriter.write("#{output_dir}/reference/functions.json", reference[:functions])
@@ -46,6 +60,8 @@ module PineDatasetPipeline
       Writers::JsonWriter.write("#{output_dir}/release_notes/pages.json", split_pages["release_notes"] || [])
       Writers::JsonWriter.write("#{output_dir}/primer/pages.json", split_pages["primer"] || [])
       Writers::JsonWriter.write("#{output_dir}/index.json", index)
+
+      log.info("Done. pages=#{normalized_pages.size} reference_functions=#{reference[:functions].size}")
 
       puts "Wrote dataset to #{output_dir}"
       puts "Pages: #{normalized_pages.size}"

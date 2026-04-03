@@ -82,8 +82,7 @@ module PineDatasetPipeline
       return nil if href.nil? || href.strip.empty?
       return nil if href.start_with?("mailto:", "javascript:", "#")
 
-      joined = base_uri.join(href)
-      joined.to_s
+      base_uri.merge(href).to_s
     rescue URI::InvalidURIError
       nil
     end
