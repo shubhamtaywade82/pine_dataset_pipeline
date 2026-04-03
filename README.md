@@ -38,6 +38,20 @@ Respect TradingView `robots.txt` and terms of use. Crawl limits live in [`config
 
 Edit [`data/seed/reference_seed.yml`](data/seed/reference_seed.yml) to pin or patch symbols when HTML parsing drifts. Optional path override: `reference_seed_path` in `sources.yml`.
 
+## Related: `pinescript-agents` (Python reference workspace)
+
+If you use **`/home/nemesis/project/trading-workspace/pinescript-agents`** (same as `~/project/trading-workspace/pinescript-agents` on your machine)—TradersPost-style Pine assistant with Claude skills, hand-curated `docs/pinescript-v6/`, templates, and Python video tools—treat **this repo as the Ruby-native replacement for the “knowledge + MCP” layer**, not a line-for-line port of the whole agent.
+
+| `pinescript-agents` (Python project) | This repo (Ruby) |
+|--------------------------------------|------------------|
+| Static markdown under `docs/pinescript-v6/` | **`bin/pine_docs_sync sync`** → `output/*.json` (crawled from TradingView; refresh on demand) |
+| No first-party MCP over that corpus (external servers optional) | **`pine_mcp/`** → stdio MCP reading `output/` (`search_functions`, `get_function`, `search_docs`, `validate_code`, …) |
+| Skills: `pine-developer`, `pine-debugger`, `pine-optimizer`, `pine-visualizer`, `pine-backtester`, `pine-manager`, `pine-publisher` | Skills: **`pine-v6-core`**, **`pine-indicator-builder`**, **`pine-strategy-builder`**, **`pine-debugger`**, **`pine-optimizer`**, plus **SMC / options** skills (see below) |
+| `templates/`, `examples/`, `projects/` for scripts | No bundled `projects/` tree—add your own repo or symlink a folder; copy **patterns** from their templates/examples |
+| `tools/video-analyzer.py`, `run_analysis.py`, Whisper/FFmpeg | **Not replicated here**—keep video workflows in that project or reimplement in Ruby separately if needed |
+
+**Practical workflow:** keep **Cursor skills** in this repo for day-to-day Pine generation with **MCP + synced JSON**; open `pinescript-agents` when you want their **long-form SKILL bodies** (e.g. ternary / line-wrap rules in `pine-developer`), **publisher/backtester/manager** narratives, or **video analysis**. You can gradually fold the best bits into [`.cursor/skills/`](.cursor/skills/) here as shorter, agentskills-compliant `SKILL.md` + `references/` files.
+
 ## Agent skills (Cursor)
 
 This repo includes an [Agent Skills](https://agentskills.io/specification)-style pack under [`.cursor/skills/`](.cursor/skills/):
